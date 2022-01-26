@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Owner;  // Eloquent エロくアント
 use Illuminate\Support\Facades\DB; // QueryBuilder クエリビルダ
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+
 
 class OwnersController extends Controller
 {
@@ -36,8 +39,9 @@ class OwnersController extends Controller
 
         // dd($e_all, $q_get, $q_first, $c_test);
         $owners = Owner::select('name', 'email', 'created_at')->get();
-            return view('admin.owners.index',
-             compact('owners'));
+
+        return view('admin.owners.index',
+        compact('owners'));
     }
 
     /**
@@ -58,7 +62,20 @@ class OwnersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $request->name;
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:owners'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        Owner::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('admin.owners.index');
     }
 
     /**
