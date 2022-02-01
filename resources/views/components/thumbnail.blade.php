@@ -15,3 +15,5 @@ if($type === 'products'){
   @endif
 </div>
 
+
+

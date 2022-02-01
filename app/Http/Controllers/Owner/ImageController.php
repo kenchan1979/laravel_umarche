@@ -8,6 +8,7 @@ use App\Models\Image;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UploadImageRequest;
 use App\Services\ImageService;
+use Illuminate\Support\Facades\Storage;
 
 
 class ImageController extends Controller
@@ -18,17 +19,18 @@ class ImageController extends Controller
 
         $this->middleware(function ($request, $next) {
 
-            $id = $request->route()->parameter('image'); //shopのid取得
-            if(!is_null($id)){ // null判定
-            $imagesOwnerId = Image ::findOrFail($id)->owner->id;
+            $id = $request->route()->parameter('image'); 
+            if(!is_null($id)){ 
+            $imagesOwnerId = Image::findOrFail($id)->owner->id;
                 $imageId = (int)$imagesOwnerId; 
                 if($imageId !== Auth::id()){ 
-                    abort(404); 
+                    abort(404);
                 }
             }
             return $next($request);
         });
     } 
+
 
     public function index()
     {
@@ -58,34 +60,27 @@ class ImageController extends Controller
      */
     public function store(UploadImageRequest $request)
     {
-        $imageFiles = $request->file('file');
+        $imageFiles = $request->file('files');
         if(!is_null($imageFiles)){
-            foreach($imageFiles as $imageFile) {
+            foreach($imageFiles as $imageFile){
                 $fileNameToStore = ImageService::upload($imageFile, 'products');    
                 Image::create([
                     'owner_id' => Auth::id(),
-                    'filename' => $fileNameToStore
+                    'filename' => $fileNameToStore  
                 ]);
             }
         }
+
         return redirect()
         ->route('owner.images.index')
         ->with(['message' => '画像登録を実施しました。',
         'status' => 'info']);
-
-
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+    //  Display the specified resource.
+    
+    //   @param  int  $id
+    //   @return \Illuminate\Http\Response
 
     /**
      * Show the form for editing the specified resource.
@@ -95,7 +90,8 @@ class ImageController extends Controller
      */
     public function edit($id)
     {
-        //
+        $image = Image::findOrFail($id);
+        return view('owner.images.edit', compact('image'));
     }
 
     /**
@@ -107,7 +103,18 @@ class ImageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'string|max:50',
+        ]);
+
+        $image = Image::findOrFail($id);
+        $image->title = $request->title;
+        $image->save();
+
+        return redirect()
+        ->route('owner.images.index')
+        ->with(['message' => '画像情報を更新しました。',
+        'status' => 'info']);
     }
 
     /**
