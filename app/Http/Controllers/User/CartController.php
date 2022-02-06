@@ -48,10 +48,10 @@ class CartController extends Controller
 
     public function delete($id)
     {
-        // Cart::where('product_id', $id)
-        // ->where('user_id', Auth::id())
-        // ->delete();
+        Cart::where('product_id', $id)
+        ->where('user_id', Auth::id())
+        ->delete();
 
-        // return redirect()->route('user.cart.index');
+        return redirect()->route('user.cart.index');
     }
 }
