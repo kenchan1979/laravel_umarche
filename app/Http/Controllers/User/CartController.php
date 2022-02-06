@@ -71,7 +71,7 @@ class CartController extends Controller
             $lineItem = [
                 'name' => $product->name,
                 'description' => $product->information,
-                'amout' => $product->price,
+                'amount' => $product->price,
                 'currency' => 'jpy',
                 'quantity' => $product->pivot->quantity,
             ];
@@ -86,7 +86,7 @@ class CartController extends Controller
                 'quantity' => $product->pivot->quantity * -1
             ]);
         }
-        dd('test');
+        // dd('test');
 
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
