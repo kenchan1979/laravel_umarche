@@ -10,6 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="md:flex md:justify-around">
+
                         <div class="md:w-1/2">
                             <!-- Slider main container -->
                         <div class="swiper">
@@ -68,17 +69,29 @@
                                 <div class="flex items-center">
                                     <span class="mr-3">数量</span>
                                     <div class="relative">
-                                        <select class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
-                                            <option>SM</option>
-                                            <option>M</option>
-                                            <option>L</option>
-                                            <option>XL</option>
+                                        <select name="quantity" class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
+                                            @for ($i = 1; $i <= $quantity; $i++)
+                                            <option value="{{$i}}">{{$i}}</option>
+                                            @endfor
                                         </select>
                                     </div>
                                 </div>
                                 <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">カートに入れる</button>
                             </div>
                         </div>
+                    </div>
+                    <div class="border-t border-gray-400 my-8"></div>
+                    <div class="mb-4 text-center">この商品を 売しているショップ</div>
+                    <div class="mb-4 text-center">{{ $product->shop->name }}</div>
+                    <div class="mb-4 text-center">
+                        @if($product->shop->filename !== null)
+                            <img src="{{ asset('storage/shops/' . $product->shop->filename )}}">
+                        @else
+                            <img src="">
+                        @endif
+                    </div>
+                    <div class="mb-4 text-center">
+                        <button type="button" class="text-white bg-gray-400 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">カートに入れる</button>
                     </div>
                 </div>
             </div>
